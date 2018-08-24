@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- jquery -->
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <!-- my css -->
+  <link rel="stylesheet" href="/css/master.css">
+
+  <title>AD_TOKEN</title>
+
+  </head>
+  <!--광고 블록체인 기반 -->
+  <body>
+
+    <nav class="navbar navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/mainpage/<%=authId%>">AD_TOKEN</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/mainpage/advertise/<%=authId%>">광고</a></li>
+            <li><a href="/profile">프로필</a></li>
+          </ul>
+          <%if(locals.authId){%>
+            <div class="avbar-form navbar-right">
+              <ul class="nav navbar-nav">
+               <li><a><%=authId%>님 반갑습니다.</a></li>
+               <li><a href="/login">로그아웃</a></li>
+              </ul>
+            </div>
+          <!-- 회원관리 -->
+           <% } else { %>
+             <form class="navbar-form navbar-right" action="/login" method="post">
+               <div class="form-group">
+                 <input type="text" placeholder="id" class="form-control" name ="id">
+               </div>
+               <div class="form-group">
+                 <input type="password" placeholder="Password" class="form-control" name ="password">
+               </div>
+               <button type="submit" class="btn btn-success">Sign in</button>
+             </form>
+           <% } %>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    <div class = "container">
+      <div class = "col-sm-6 col-sm-offset">
+        <h1><span class = "fa fa-sign-in"></span> 광고등록 </h1>
+        <form action ="/mainpage/advertise/<%=authId%>" method ="post">
+          <div class = "form-group">
+            <div class ="form-group">
+              <label> 제목 </label>
+              <input type ="text" class = "form-control" name ="subject">
+            </div>
+            <label> 광고URL </label>
+            <input type ="text" class = "form-control" name ="url">
+          </div>
+          <div class ="form-group">
+            <label> 내용 </label>
+            <input type ="text" class = "form-control" name ="descript">
+          </div>
+          <button type ="submit" class = "btn btn-warning btn-lg">등록</button>
+        </form>
+        <hr>
+      </div>
+    </div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="../../dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>
