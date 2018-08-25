@@ -18,6 +18,7 @@ module.exports = function(app,conn){
   var async = require('async');
 
 
+
   //get 방식일 경우 -> login
   router.get('/', function(req,res){
     res.render('login');
