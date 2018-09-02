@@ -1,5 +1,5 @@
 //로그인 모듈
-module.exports = function(app,conn){
+module.exports = function(app,conn,abi,bytecode){
   var express = require('express');
   var router = express.Router();    //라우팅하는 능력이 있는 객체를 추출한다.
 
@@ -10,12 +10,12 @@ module.exports = function(app,conn){
   /* 스마트 컨트랙트 compile*/
   var solc = require('solc');
   var fs = require('fs'); //file 시스템
-
+  
   //메인페이지
   router.get(['/', '/:id'], function(req,res){
     //로그인 정보 ID만
     var authId = req.params.id;
-
+    console.log('checkMainpage');
     //등록된 광고가 있을경우
     if(authId){
       var sql = 'SELECT tx_hash,accounts FROM ad_chain';
@@ -25,18 +25,6 @@ module.exports = function(app,conn){
 
         }
         if(ad_chain.length != 0){
-
-          let source = fs.readFileSync("./contracts/ADContract.sol", 'utf8');
-          console.log('transaction...compiling contract .....');
-
-          let compiledContract = solc.compile(source);
-          console.log('done!!');
-
-          for (let contractName in compiledContract.contracts) {
-              // code and ABI that are needed by web3
-              var abi = JSON.parse(compiledContract.contracts[contractName].interface);
-              //console.log(JSON.stringify(abi, undefined, 2));
-          }
           //계약한 주소 length만큼 for문
           var contract_array = [];
           for(var i =0; i < ad_chain.length;  i++)
@@ -47,7 +35,9 @@ module.exports = function(app,conn){
             console.log("contract정보 : "+MyContract.options.address);
             //컨트랙주소를 웹화면에
             MyContract.methods.getContract().call(function(err, contract){
-              if(err){}
+              if(err){
+                console.log(err);
+              }
               contract_array.push(contract);
               if(i == contract_array.length){
                 console.log("컨트랙트길이"+contract_array.length);
@@ -57,7 +47,8 @@ module.exports = function(app,conn){
           }
         }
         //해당데이터가 없을경우
-        res.render('mainpage', {authId:authId});
+        else
+          res.render('mainpage', {authId:authId});
       });
     }
     //ID가없을경우..
@@ -89,27 +80,13 @@ module.exports = function(app,conn){
         console.log('No Data collection');
       }
       console.log('User Id 값 : ', users[0].id);
-      let source = fs.readFileSync("./contracts/ADContract.sol", 'utf8');
-      console.log('compiling contract .....');
-
-      let compiledContract = solc.compile(source);
-      console.log('done');
-
-      for (let contractName in compiledContract.contracts) {
-          // code and ABI that are needed by web3
-          var bytecode = compiledContract.contracts[contractName].bytecode;
-          var abi = JSON.parse(compiledContract.contracts[contractName].interface);
-          console.log(JSON.stringify(abi, undefined, 2));
-      }
-      //계약한 주소
-      console.log('abi compile');
-
       let MyContract = new web3.eth.Contract(abi);
 
-      //deploy
+      //deploy 계좌를 unlock을 시켜야함
+      //기반값
       var delplyContractTx = MyContract.deploy({
         data: bytecode,
-        arguments:[users[0].accounts, url, subject, descript]
+        arguments:[url, subject, descript, 100000]
       })
       .send({
         from: users[0].accounts,
@@ -118,7 +95,6 @@ module.exports = function(app,conn){
       })
       .then((instance) => {
         var address = instance.options.address;
-        console.log('Address ' + address);
         //스마트 컨트랙트 ad_user_id, authId, accounts, url, descript, tx_hash
         var sql = 'INSERT INTO ad_chain (ad_users_id, authId, accounts, url, descript, tx_hash) VALUES (?,?,?,?,?,?)';
         conn.query(sql, [users[0].id, users[0].authId, users[0].accounts, url, descript, address], function(err, result, fields){

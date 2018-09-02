@@ -34,6 +34,7 @@
           <ul class="nav navbar-nav">
            <li><a href="/mainpage/advertise/<%=authId %>">광고</a></li>
            <li><a href="/profile/<%=authId %>">프로필</a></li>
+           <li><a href="/mypage/<%=authId%>">내가등록한 광고</a></li>
           </ul>
          <%if(locals.authId){%>
            <div class="avbar-form navbar-right">
@@ -70,16 +71,18 @@
     <div class="container">
       <!-- contar of columns -->
       <div class="row">
-        <% for (var i =0; i< ad_contract.length; i++) { %>
-          <div class="col-md-6">
-            <h2> <%=ad_contract[i][1] %> </h2>
-            <img src="http://img.youtube.com/vi/<%=ad_contract[i][0]%>/maxresdefault.jpg"/  width="560" height="355">
-            <!-- <div class="youtubeWrap">
-                <iframe width="560" height="315" src="<%=ad_contract[i][0]%>" frameborder="0" allowfullscreen></iframe>
-            </div> -->
-            <p></p>
-            <p><a class="btn btn-default" href="/advertise/<%=ad_contract[i][0]%>/<%=authId%>" role="button">광고보기 &raquo;</a></p>
-          </div>
+        <%if(locals.ad_contract){%>
+          <% for (var i =0; i< ad_contract.length; i++) { %>
+            <div class="col-md-6">
+              <h2> <%=ad_contract[i][1] %> </h2>
+              <img src="http://img.youtube.com/vi/<%=ad_contract[i][0]%>/sddefault.jpg"/  width="560" height="355">
+              <!-- <div class="youtubeWrap">
+                  <iframe width="560" height="315" src="<%=ad_contract[i][0]%>" frameborder="0" allowfullscreen></iframe>
+              </div> -->
+              <p></p>
+              <p><a class="btn btn-default" href="/advertise/<%=ad_contract[i][0]%>/<%=authId%>" role="button">광고보기 &raquo;</a></p>
+            </div>
+          <% } %>
         <% } %>
       </div>
       <hr>

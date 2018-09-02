@@ -35,7 +35,7 @@ module.exports = function(app,conn){
               console.log("(Regsiter)SQL Insert error Ad_user");
               console.log(err);
             }
-            res.render('profile');
+            res.render('login');
         });
       });
     });

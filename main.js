@@ -8,7 +8,6 @@ var mysql = require('mysql');   //db
 var session = require('express-session'); //session을 사용하기 위한 모듈
 var MySQLStore = require('express-mysql-session')(session); //session연결
 
-
 var conn = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
@@ -18,12 +17,20 @@ var conn = mysql.createConnection({
 conn.connect();
 
 
+//module 생성
+var contract = require('./modules/compile.js');
+var contract_abi = contract.abi();
+var contract_bytecode = contract.bytecode();
+//컨트랙트는 처음 서버기동때 생성
+
+console.log(contract_abi);
+
 //router
-var login = require('./routes/login')(app,conn);
-var mainpage = require('./routes/mainpage')(app,conn);
-var register = require('./routes/register')(app,conn);
+var login = require('./routes/login')(app,conn,contract_abi);
+var mainpage = require('./routes/mainpage')(app,conn,contract_abi,contract_bytecode);
+var register = require('./routes/register')(app,conn,contract_abi);
 var profile  = require('./routes/profile')(app,conn);
-var advertise  = require('./routes/advertise')(app,conn);
+var advertise  = require('./routes/advertise')(app,conn,contract_abi);
 
 
 app.set('views', './views');
@@ -33,9 +40,12 @@ app.set('view engine', 'ejs'); //jade
 app.get('/main', function(req,res){
   res.render('main');
 });
+
+
 //CSS 관련
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
+app.use('/script', express.static(__dirname + '/script'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 /* 앱 라우터 */

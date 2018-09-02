@@ -8,10 +8,14 @@ contract ADContract {
   string subject;
   string descript;
 
-  //광고를 통한 송금
+  //계좌잔액
+  mapping (address => uint) public balanceOf; //계좌잔액
 
-  //광고 계약등록 -> 광고를 등록하면 계약이 실행됨
-  function ADContract(address _contract_address, string _url, string _subject, string _descript) public {
+  //광고를 통한 송금
+  //광고 계약등록 -> 광고를 등록하면 계약이 실행됨 //token 저장
+
+  function ADContract(address _contract_address, string _url, string _subject, string _descript, uint _value) public {
+      balanceOf[_contract_address] = _value;  //해당 계약한 주소에 이더의 개수를 저장한다.
       contract_address = _contract_address;
       url = _url;
       subject = _subject;
@@ -32,6 +36,23 @@ contract ADContract {
   {
     return (url, subject, descript);
   }
-  //송금을 이용한 contract 실행
-
+  //송금을 이용한 contract 실행 트랜잭션 실행
+  function transfer(address _to, uint _value) payable {
+    //계약을 등록한 contract주소 잔액을 감소시키고 해당 등록한 사용자의 contract의 잔액이 증가한다.
+    balanceOf[contract_address] -= _value;
+    balanceOf[_to]  += _value;  //해당 광고를 본 사람에게는 잔액이 증가한다.
+  }
+  //자신의 현재 토큰 광고를 등록했던 잔액을 나타낸다. 각토큰의 개수 -> 자신의 토큰개수를 알수 있다.
+  function getBalnace(address _account) constant returns(uint){
+      return balanceOf[_account];
+  }
+  //자신의 부족한 토큰을 이더리움으로 채운다.
+  function deposit(address _from, uint _value){
+    //해당광고에 대해서 토큰을 채운다.
+    balanceOf[_from] += _value;
+  }
+  //해당 광고에 이더가 남아있는지 체크한다.
+  function checkToken(address _from) returns (uint){
+    return balanceOf[_from];
+  }
 }

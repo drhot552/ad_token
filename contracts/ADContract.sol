@@ -13,9 +13,9 @@ contract ADContract {
 
   //광고를 통한 송금
   //광고 계약등록 -> 광고를 등록하면 계약이 실행됨
-  function ADContract(address _contract_address, string _url, string _subject, string _descript) public {
-      balanceOf[msg.sender] = msg.value;  //해당 계약한 주소에 이더의 개수를 저장한다.
-      contract_address = _contract_address;
+  function ADContract(string _url, string _subject, string _descript, uint _value) public {
+      balanceOf[msg.sender] = _value;  //해당 계약한 주소에 이더의 개수를 저장한다.
+      contract_address = msg.sender;
       url = _url;
       subject = _subject;
       descript = _descript;
@@ -29,6 +29,10 @@ contract ADContract {
   }
   function getDescript() returns (string){
       return descript;
+  }
+  //계약한 주소 얻기
+  function getAddress() returns (address){
+      return msg.sender;
   }
   //계약리스트 얻기
   function getContract() returns (string, string, string)
@@ -47,6 +51,14 @@ contract ADContract {
   }
   //자신의 부족한 토큰을 이더리움으로 채운다.
   function deposit(address _from, uint _value){
+    //해당광고에 대해서 토큰을 채운다.
     balanceOf[_from] += _value;
+  }
+  //해당 광고에 이더가 남아있는지 체크한다.
+  function checkToken(address _from) returns (bool){
+      if(balanceOf[_from] > 0){
+          return true;
+      }
+      return false;
   }
 }

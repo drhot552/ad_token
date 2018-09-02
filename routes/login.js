@@ -1,5 +1,5 @@
 //로그인 모듈
-module.exports = function(app,conn){
+module.exports = function(app,conn, abi){
   var express = require('express');
   var router = express.Router();    //라우팅하는 능력이 있는 객체를 추출한다.
 
@@ -16,7 +16,7 @@ module.exports = function(app,conn){
 
   //비동기방식
   var async = require('async');
-
+  //세션연결
 
 
   //get 방식일 경우 -> login
@@ -38,16 +38,17 @@ module.exports = function(app,conn){
         console.log('(login.js)ID가 존재하지 않습니다.');
         //res.render('register'); //없으면 Register
       }
+      // hash를 이용하여 비밀번호를 암호화 한다.
       else {
         return hasher({password:password, salt:db_accounts[0].salt}, function(err,pass,salt,hash){
             if(hash == db_accounts[0].password){
-
               //있으면 블록체인에서 계좌를 찾는다. Call back Function
               web3.eth.getAccounts(function(err,accounts){
                 if(err){
+                  console.log('(login.js)이더리움블록체인 계좌검색오류');
                 }
                 for(var i=0; i<accounts.length; i++){
-                  if(accounts[i].toLowerCase() == db_accounts[0].accounts)
+                  if(accounts[i].toLowerCase() == db_accounts[0].accounts.toLowerCase())
                   {
                     //로그인 성공
                     console.log("(login.js)사용자계좌 "+accounts[i]);
@@ -64,18 +65,7 @@ module.exports = function(app,conn){
                       //광고가 있을경우
                       if(ad_chain.length != 0)
                       {
-                        let source = fs.readFileSync("./contracts/ADContract.sol", 'utf8');
-                        console.log('transaction...compiling contract .....');
 
-                        let compiledContract = solc.compile(source);
-                        console.log('done!!');
-
-                        //compile
-                        for (let contractName in compiledContract.contracts) {
-                            // code and ABI that are needed by web3
-                            var abi = JSON.parse(compiledContract.contracts[contractName].interface);
-                            // contjson파일을 저장
-                        }
                         //배열로 넣기.
                         var contract_array = [];
                         for(var i =0; i < ad_chain.length;  i++)
