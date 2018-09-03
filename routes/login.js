@@ -26,7 +26,7 @@ module.exports = function(app,conn, abi){
   router.post('/', function(req,res){
     //account기반 체크
     var id = req.body.id;
-    var password  = req.body.password;
+    var password = req.body.password; //한번로그인하면 해당 로그인 세션은 유지시킨다.
     var sql = 'SELECT authId, accounts, password, salt, username, email FROM ad_users WHERE authid = ?';
     conn.query(sql, [id], function(err, db_accounts){
       //id하고 password가 맞을경우 account 계좌를 탐색한다. 그렇지 않으면 탐색하지 않는다.
@@ -51,6 +51,12 @@ module.exports = function(app,conn, abi){
                   if(accounts[i].toLowerCase() == db_accounts[0].accounts.toLowerCase())
                   {
                     //로그인 성공
+                    //req session에 저장
+                    req.session.id = id;
+                    req.session.password = password;
+
+
+                    console.log("(login.js)세션로그이확인" + req.session.password + req.session.accounts);
                     console.log("(login.js)사용자계좌 "+accounts[i]);
                     //메인홈페이지로 이동..
                     console.log("(login.js)사용자ID "+db_accounts[0].authId);

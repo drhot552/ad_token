@@ -27,7 +27,7 @@ module.exports = function(app,conn){
         var ether= web3.utils.fromWei(result,'ether');
         var bal = ether;
 
-        res.render('profile', {authId:authId, name:users[0].username, email:users[0].email, accounts:users[0].db_accounts,
+        res.render('profile', {authId:authId, name:users[0].username, email:users[0].email, accounts:users[0].accounts,
                                 bal:bal});
       });
     });

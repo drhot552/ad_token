@@ -23,21 +23,28 @@ module.exports = function(app,conn){
       var salt = salt;
       var email = req.body.email;
       var name = req.body.name;
-      //블록체인 이더리움 계좌 생성
-      var account = web3.eth.personal.newAccount(password, function(err,account){
-          if(err){
-            console.log("(Regsiter)Ethereum new account Generate!!"+err);
-            console.log(err);
-          }
-          var sql = 'INSERT INTO ad_users(authId, accounts, username, password, salt, displayName, email) VALUES (?,?,?,?,?,?,?)';
-          conn.query(sql, [authid,account,name,password,salt,name,email], function(err, results, fields){
+      if(req.body.password){
+        req.session.password = req.body.passowrd; //패스워드
+        var account = web3.eth.personal.newAccount(req.session.password, function(err,account){
             if(err){
-              console.log("(Regsiter)SQL Insert error Ad_user");
+              console.log("(Regsiter)Ethereum new account Generate!!"+err);
               console.log(err);
             }
-            res.render('login');
+            var sql = 'INSERT INTO ad_users(authId, accounts, username, password, salt, displayName, email) VALUES (?,?,?,?,?,?,?)';
+            conn.query(sql, [authid,account,name,password,salt,name,email], function(err, results, fields){
+              if(err){
+                console.log("(Regsiter)SQL Insert error Ad_user");
+                console.log(err);
+              }
+              res.render('login');
+          });
         });
-      });
+
+      }
+      else{
+        //알림으로 설정 변경
+        console.log('(register.js) 비밀번호를 입력하세요.');
+      }
     });
   });
 

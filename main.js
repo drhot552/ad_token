@@ -41,12 +41,16 @@ app.get('/main', function(req,res){
   res.render('main');
 });
 
-
 //CSS 관련
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
 app.use('/script', express.static(__dirname + '/script'));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({
+  secret : '1234DSFs@adf1234!@#$a11123#$%%sd',
+  resave : false,
+  saveUninitialized : true
+}));  //session set
 
 /* 앱 라우터 */
 app.use('/login', login);
@@ -54,7 +58,6 @@ app.use('/mainpage', mainpage);
 app.use('/register', register);
 app.use('/profile', profile);
 app.use('/advertise', advertise);
-
 
 
 //app을 listen
